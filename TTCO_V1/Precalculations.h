@@ -117,6 +117,18 @@ DATE MakeBaseGame(){
     }
   }
 
+  for(i=0;i<2;i++){
+    game.nrSnob[0]=player_data[i].nrNobl;
+  }
+
+  for(i=0;i<nr_nobl;i++){
+    game.masa_snob[i]=table_nobl[i];
+  }
+
+  for(;i<SNOBNR;i++){
+    game.masa_snob[i]=-1;
+  }
+
   game.usedRezerve=0;
 
   return game;

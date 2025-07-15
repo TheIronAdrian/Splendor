@@ -1,7 +1,9 @@
 #ifndef MINIMAX_H_INCLUDED
 #define MINIMAX_H_INCLUDED
 #define INFI 100000000
-#define DEPTH 5
+#define DEPTH 7
+#define SNOBNR 4
+
 #include <queue>
 
 struct MOVE{
@@ -12,6 +14,7 @@ MOVE ans;
 
 struct DATE{
   int masa_cards[CARDS_CNT+1];
+  int masa_snob[SNOBNR];
   int masa_gems[GEM_GOLD];
   int player_gems[2][GEM_GOLD];
   int bonus[2][GEM_CNT];
@@ -19,6 +22,7 @@ struct DATE{
   int nrRez[2];
   int points[2];
   int nrGems[2];
+  int nrSnob[2];
   int usedRezerve;
 };
 
@@ -47,9 +51,10 @@ int CalculPersoana(int player,const DATE &game){
 
   for(i=0;i<GEM_CNT;i++){
     s+=game.bonus[player][i]*50*(15-round_nr);
+    s+=game.player_gems[player][i]*2;
   }
 
-  //*
+  /*
   sumGem[0]=0;
   sumGem[1]=0;
   sumGem[2]=0;
@@ -59,7 +64,7 @@ int CalculPersoana(int player,const DATE &game){
   for(i=1;i<=CARDS_CNT;i++){
     if(game.rez[player][i]==1 || game.masa_cards[i]==1){
       for(j=0;j<GEM_CNT;j++){
-        sumGem[j]+=CARDS[i][j]*CARDS[i][POINTS];
+        sumGem[j]+=CARDS[i][j];
       }
     }
     if(game.rez[player][i]==1){
@@ -70,11 +75,11 @@ int CalculPersoana(int player,const DATE &game){
   //*/
 
 
+
+  /*
   for(j=0;j<GEM_CNT;j++){
     s+=(sumGem[j]*game.player_gems[player][j])/15;
   }
-
-  //*
   cont[0]=0;
   cont[1]=0;
   cont[2]=0;
@@ -116,8 +121,33 @@ int CalculStatic(int player,int adan,const DATE &game){
   s-=CalculPersoana(1-player,game);
 
 
-
   return s;
+}
+
+int PosibilSnob(int player,DATE &game){
+  int x,i,steag,id_snob;
+
+  for(x=0;x<SNOBNR;x++){
+    if(game.masa_snob[x]!=-1){
+      steag=1;
+
+      id_snob = game.masa_snob[x];
+
+      for(i=0;i<GEM_CNT;i++){
+        if(game.bonus[player][i]<NOBLE_CARDS[id_snob][i]){
+          steag=0;
+          break;
+        }
+      }
+
+
+      if(steag==1){
+        return x;
+      }
+    }
+  }
+
+  return -1;
 }
 
 bool PosibilBuy(int player,int id_card,const DATE &game){
@@ -390,6 +420,8 @@ int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta){
     if(game.masa_cards[x]==1 || game.rez[player][x]==1){
       if(PosibilBuy(player,x,game)){
         int careDintre;
+        int snobAles,snobValoare;
+
 
         if(game.masa_cards[x]==1){
           careDintre=0;
@@ -423,9 +455,24 @@ int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta){
 
         game.bonus[player][CARDS[x][BONUS]]++;
 
+        snobAles = PosibilSnob(player,game);
+
+        if(snobAles!=-1){
+          game.nrSnob[player]++;
+          game.points[player]+=3;
+          snobValoare=game.masa_snob[snobAles];
+          game.masa_snob[snobAles]=-1;
+        }
+
         aux = Minimax(1-player,adan+1,game,-inm,alpha,beta);
 
         mi = maxim(mi*inm,aux*inm)*inm;
+
+        if(snobAles!=-1){
+          game.nrSnob[player]--;
+          game.points[player]-=3;
+          game.masa_snob[snobAles]=snobValoare;
+        }
 
         game.bonus[player][CARDS[x][BONUS]]--;
 
