@@ -1,7 +1,7 @@
 #ifndef MINIMAX_H_INCLUDED
 #define MINIMAX_H_INCLUDED
 #define INFI 100000000
-#define DEPTH 4
+#define DEPTH 7
 #include <queue>
 
 struct MOVE{
@@ -40,12 +40,16 @@ int CalculPersoana(int player,const DATE &game){
   int s,i,j,cont[5],nr,sumGem[5];
 
   s=0;
-  s+=game.points[player]*10000;
+
+  s+=(game.points[player]-game.points[1-player])*500;
+
+  s+=game.points[player]*1000;
 
   for(i=0;i<GEM_CNT;i++){
     s+=game.bonus[player][i]*50*(15-round_nr);
   }
 
+  /*
   sumGem[0]=0;
   sumGem[1]=0;
   sumGem[2]=0;
@@ -63,12 +67,13 @@ int CalculPersoana(int player,const DATE &game){
       cont[CARDS[i][BONUS]]++;
     }
   }
+  //*/
 
-  for(j=0;j<GEM_CNT;j++){
+  //for(j=0;j<GEM_CNT;j++){
     //s+=(sumGem[j]*game.player_gems[player][j])/15;
-  }
+  //}
 
-  cont[0]=0;
+  /*cont[0]=0;
   cont[1]=0;
   cont[2]=0;
   cont[3]=0;
@@ -88,7 +93,7 @@ int CalculPersoana(int player,const DATE &game){
 
   if(nr<=3){
     s+=20000;
-  }
+  }*/
 
 
   s-=game.nrRez[player]*(5-round_nr)*50;
@@ -173,7 +178,29 @@ int CountCards(int player, const DATE &game){
   return s;
 }
 
-int Minimax(int player, int adan, DATE &game,int inm){
+bool Prunes(int &alpha,int &beta,int val,int maxer){
+  if(maxer==1){ ///Maximizeaza
+
+    if(val>=beta){
+      return 1;
+    }
+
+    alpha = maxim(alpha,val);
+
+    return 0;
+  }
+  ///Minimizeaza
+
+  if(val<=alpha){
+    return 1;
+  }
+
+  beta = maxim(beta,val);
+
+  return 0;
+}
+
+int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta){
   int x,y,z,mi,aux;
 
   //player=id;
@@ -218,7 +245,7 @@ int Minimax(int player, int adan, DATE &game,int inm){
         if(game.masa_gems[x]>=1){
           AddJewel(player,x,game);
 
-          aux = Minimax(1-player,adan+1,game,-inm);
+          aux = Minimax(1-player,adan+1,game,-inm,alpha,beta);
 
           mi=maxim(mi*inm,aux*inm)*inm;
 
@@ -227,6 +254,10 @@ int Minimax(int player, int adan, DATE &game,int inm){
           }
 
           RmJewel(player,x,game);
+
+          if(Prunes(alpha,beta,aux,inm)){
+            return mi;
+          }
         }
       }
     }
@@ -239,7 +270,7 @@ int Minimax(int player, int adan, DATE &game,int inm){
             AddJewel(player,x,game);
             AddJewel(player,y,game);
 
-            aux = Minimax(1-player,adan+1,game,-inm);
+            aux = Minimax(1-player,adan+1,game,-inm,alpha,beta);
 
             mi=maxim(mi*inm,aux*inm)*inm;
 
@@ -249,6 +280,10 @@ int Minimax(int player, int adan, DATE &game,int inm){
 
             RmJewel(player,x,game);
             RmJewel(player,y,game);
+
+            if(Prunes(alpha,beta,aux,inm)){
+              return mi;
+            }
           }
         }
       }
@@ -264,7 +299,7 @@ int Minimax(int player, int adan, DATE &game,int inm){
               AddJewel(player,y,game);
               AddJewel(player,z,game);
 
-              aux = Minimax(1-player,adan+1,game,-inm);
+              aux = Minimax(1-player,adan+1,game,-inm,alpha,beta);
 
               mi=maxim(mi*inm,aux*inm)*inm;
 
@@ -275,6 +310,10 @@ int Minimax(int player, int adan, DATE &game,int inm){
               RmJewel(player,x,game);
               RmJewel(player,y,game);
               RmJewel(player,z,game);
+
+              if(Prunes(alpha,beta,aux,inm)){
+                return mi;
+              }
             }
           }
         }
@@ -288,7 +327,7 @@ int Minimax(int player, int adan, DATE &game,int inm){
         AddJewel(player,x,game);
         AddJewel(player,x,game);
 
-        aux = Minimax(1-player,adan+1,game,-inm);
+        aux = Minimax(1-player,adan+1,game,-inm,alpha,beta);
 
         mi=maxim(mi*inm,aux*inm)*inm;
 
@@ -298,6 +337,10 @@ int Minimax(int player, int adan, DATE &game,int inm){
 
         RmJewel(player,x,game);
         RmJewel(player,x,game);
+
+        if(Prunes(alpha,beta,aux,inm)){
+          return mi;
+        }
       }
     }
   }
@@ -317,7 +360,7 @@ int Minimax(int player, int adan, DATE &game,int inm){
           AddJewel(player,GOLD,game);
         }
 
-        aux = Minimax(1-player,adan+1,game,-inm);
+        aux = Minimax(1-player,adan+1,game,-inm,alpha,beta);
 
         mi=maxim(mi*inm,aux*inm)*inm;
 
@@ -330,6 +373,10 @@ int Minimax(int player, int adan, DATE &game,int inm){
         }
         game.nrRez[player]--;
         game.rez[player][x]=0;
+
+        if(Prunes(alpha,beta,aux,inm)){
+          return mi;
+        }
       }
     }
   }
@@ -373,7 +420,7 @@ int Minimax(int player, int adan, DATE &game,int inm){
 
         game.bonus[player][CARDS[x][BONUS]]++;
 
-        aux = Minimax(1-player,adan+1,game,-inm);
+        aux = Minimax(1-player,adan+1,game,-inm,alpha,beta);
 
         mi = maxim(mi*inm,aux*inm)*inm;
 
@@ -394,6 +441,10 @@ int Minimax(int player, int adan, DATE &game,int inm){
           game.masa_cards[x]=1;
         }else{
           game.rez[player][x]=1;
+        }
+
+        if(Prunes(alpha,beta,aux,inm)){
+          return mi;
         }
       }
     }

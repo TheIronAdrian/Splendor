@@ -14,7 +14,7 @@ int main(){
 
 
   DATE game = MakeBaseGame();
-  Minimax(id,0,game,1);
+  Minimax(id,0,game,1,-INFI,INFI);
 
   Afisare(ans);
   cerr << "kibitz " << ans.val << "\n";
