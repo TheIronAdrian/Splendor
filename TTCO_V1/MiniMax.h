@@ -41,7 +41,7 @@ int CalculPersoana(int player,const DATE &game){
 
   s=0;
 
-  s+=(game.points[player]-game.points[1-player])*500;
+  //s+=(game.points[player]-game.points[1-player])*500;
 
   s+=game.points[player]*1000;
 
@@ -49,7 +49,7 @@ int CalculPersoana(int player,const DATE &game){
     s+=game.bonus[player][i]*50*(15-round_nr);
   }
 
-  /*
+  //*
   sumGem[0]=0;
   sumGem[1]=0;
   sumGem[2]=0;
@@ -69,11 +69,13 @@ int CalculPersoana(int player,const DATE &game){
   }
   //*/
 
-  //for(j=0;j<GEM_CNT;j++){
-    //s+=(sumGem[j]*game.player_gems[player][j])/15;
-  //}
 
-  /*cont[0]=0;
+  for(j=0;j<GEM_CNT;j++){
+    s+=(sumGem[j]*game.player_gems[player][j])/15;
+  }
+
+  //*
+  cont[0]=0;
   cont[1]=0;
   cont[2]=0;
   cont[3]=0;
@@ -93,7 +95,8 @@ int CalculPersoana(int player,const DATE &game){
 
   if(nr<=3){
     s+=20000;
-  }*/
+  }
+  //*/
 
 
   s-=game.nrRez[player]*(5-round_nr)*50;
