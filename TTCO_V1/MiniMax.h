@@ -1,7 +1,7 @@
 #ifndef MINIMAX_H_INCLUDED
 #define MINIMAX_H_INCLUDED
 #define INFI 100000000
-#define DEPTH 7
+#define DEPTH 5
 #include <queue>
 
 struct MOVE{
@@ -59,7 +59,7 @@ int CalculPersoana(int player,const DATE &game){
   for(i=1;i<=CARDS_CNT;i++){
     if(game.rez[player][i]==1 || game.masa_cards[i]==1){
       for(j=0;j<GEM_CNT;j++){
-        sumGem[CARDS[i][j]]+=CARDS[i][POINTS];
+        sumGem[j]+=CARDS[i][j]*CARDS[i][POINTS];
       }
     }
     if(game.rez[player][i]==1){
