@@ -253,8 +253,8 @@ int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta){
     if(game.points[player]==game.points[1-player]){
       int cp,cNp;
 
-      cp = CountCards(player,game);
-      cNp= CountCards(1-player,game);
+      cp = CountCards(id,game);
+      cNp= CountCards(1-id,game);
 
       if(cp==cNp){
         return 0;
@@ -264,7 +264,7 @@ int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta){
       }
       return -INFI;
     }
-    if(game.points[player]>game.points[1-player]){
+    if(game.points[id]>game.points[1-id]){
       return INFI;
     }
     return -INFI;
