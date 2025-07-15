@@ -1,7 +1,7 @@
 #ifndef MINIMAX_H_INCLUDED
 #define MINIMAX_H_INCLUDED
 #define INFI 100000000
-#define DEPTH 5
+#define DEPTH 4
 #include <queue>
 
 struct MOVE{
@@ -105,7 +105,7 @@ int CalculStatic(int player,int adan,const DATE &game){
   s=0;
 
   s+=CalculPersoana(player,game);
-  s-=(CalculPersoana(1-player,game)/2);
+  s-=CalculPersoana(1-player,game);
 
 
 
@@ -175,6 +175,9 @@ int CountCards(int player, const DATE &game){
 
 int Minimax(int player, int adan, DATE &game,int inm){
   int x,y,z,mi,aux;
+
+  //player=id;
+  //inm=1;
 
   mi=INFI*(-inm);
 
