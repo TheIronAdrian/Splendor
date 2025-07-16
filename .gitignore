@@ -1,7 +1,3 @@
-tmp
-obj
-bin
-test.1.er
-*.depend
-*.layout
-*.cbp
+TTCO_V1/*
+!TTCO_V1/*.c
+!TTCO_V1/*.h
