@@ -18,23 +18,27 @@
 
 1752492477 c:\users\mihai\tabaranerdvana2025\ttco_v1\afisare.h
 
-1752657679 source:c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\main.cpp
+1752664491 source:c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\main.cpp
 	<iostream>
 	"Cards.h"
 	"Read.h"
 	"MiniMax.h"
 	"Precalculations.h"
 	"Afisare.h"
+	"Time.h"
 
 1752506859 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\cards.h
 
 1752653858 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\read.h
 
-1752658222 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\minimax.h
+1752664796 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\minimax.h
 	<cassert>
 	<queue>
 
-1752655660 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\precalculations.h
+1752660124 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\precalculations.h
 
 1752492477 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\afisare.h
+
+1752660175 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\time.h
+	<chrono>
 

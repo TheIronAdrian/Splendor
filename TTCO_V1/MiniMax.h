@@ -5,11 +5,14 @@ int DEPTH = 8;
 #define SNOBNR 4
 #define MOD 64
 #define ROUNDACCEPTJEWEL 4
+#define MAXTIME 10.0f
 
-//#define DEBUG
+#define DEBUG
 
 #include <cassert>
 #include <queue>
+
+inline double getTime();
 
 struct MOVE{
   int val,type,rasp[3];
@@ -204,10 +207,10 @@ int CalculPersoana(int player,const DATE &game){
 
   //s+=(game.points[player]-game.points[1-player])*500;
 
-  s+=game.points[player]*100000;
+  s+=game.points[player]*10000;
 
   for(i=0;i<GEM_CNT;i++){
-    s+=game.bonus[player][i]*50*(15-round_nr);
+    s+=game.bonus[player][i]*50*(30-round_nr);
     s+=game.player_gems[player][i]*2;
   }
 
@@ -369,6 +372,11 @@ int CountCards(int player, const DATE &game){
 }
 
 bool Prunes(int &alpha,int &beta,int val,int maxer){
+
+  if(getTime()>=MAXTIME){
+    return 1;
+  }
+
   if(maxer==1){ ///Maximizeaza
 
     if(val>=beta){
@@ -396,7 +404,7 @@ RET Move1Token(int player, int adan, DATE &game,int inm,int alpha,int beta,int &
   int x,aux;
 
   ///Luam 1 Jetoan
-  if((game.nrGems[player]<=9 && round_nr>=ROUNDACCEPTJEWEL) || game.nrGems[player]==9){
+  if(game.nrGems[player]<=9){
     for(x=0;x<GEM_CNT;x++){
       if(game.masa_gems[x]>=1){
 
@@ -434,7 +442,7 @@ RET Move2Token(int player, int adan, DATE &game,int inm,int alpha,int beta,int &
   int x,y,aux;
 
   ///Luam 2 Jetoane
-  if((game.nrGems[player]<=8 && round_nr>=ROUNDACCEPTJEWEL) || game.nrGems[player]==8){
+  if(game.nrGems[player]<=8){
     for(x=0;x<GEM_CNT;x++){
       for(y=x+1;y<GEM_CNT;y++){
         if(game.masa_gems[x]>=1 && game.masa_gems[y]>=1){
