@@ -5,9 +5,9 @@ int DEPTH = 8;
 #define SNOBNR 4
 #define MOD 64
 #define ROUNDACCEPTJEWEL 4
-#define MAXTIME 10.0f
+#define MAXTIME 3.0f
 
-#define DEBUG
+//#define DEBUG
 
 #include <cassert>
 #include <queue>
@@ -740,10 +740,6 @@ int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta){
     ans.val=-INFI*10;
   }
 
-  if(adan>=DEPTH){
-    return CalculStatic(id,adan,game);
-  }
-
   if(adan>0 && (id+player)%2==0 && (game.points[player]>=15 || game.points[1-player]>=15)){
     int calcStatic = CalculStatic(id,adan,game);
 
@@ -766,6 +762,11 @@ int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta){
     }
     return -INFI+calcStatic;
   }
+
+  if(adan>=DEPTH){
+    return CalculStatic(id,adan,game);
+  }
+
 
   ///Cumpar
 

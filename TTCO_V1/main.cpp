@@ -11,9 +11,8 @@ using namespace std;
 
 int main(){
 
-  getTime();
-
   Read_Table();
+  getTime();
   CalculatePointsBef();
   CalculateBonusBef();
   CalculateMasks();
