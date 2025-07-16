@@ -18,7 +18,7 @@
 
 1752492477 c:\users\mihai\tabaranerdvana2025\ttco_v1\afisare.h
 
-1752578594 source:c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\main.cpp
+1752647743 source:c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\main.cpp
 	<iostream>
 	"Cards.h"
 	"Read.h"
@@ -30,7 +30,8 @@
 
 1752494767 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\read.h
 
-1752610331 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\minimax.h
+1752652633 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\minimax.h
+	<cassert>
 	<queue>
 
 1752597664 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\precalculations.h

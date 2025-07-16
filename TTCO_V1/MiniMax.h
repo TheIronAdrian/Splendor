@@ -1,13 +1,21 @@
 #ifndef MINIMAX_H_INCLUDED
 #define MINIMAX_H_INCLUDED
 #define INFI 100000000
-#define DEPTH 7
+#define DEPTH 5
 #define SNOBNR 4
 
+//#define DEBUG
+
+#include <cassert>
 #include <queue>
 
 struct MOVE{
   int val,type,rasp[3];
+};
+
+struct RET{
+  bool isPruned;
+  int val;
 };
 
 MOVE ans;
@@ -24,6 +32,66 @@ struct DATE{
   int nrGems[2];
   int nrSnob[2];
   int usedRezerve;
+
+  bool operator==(DATE &a){
+    int i,j;
+
+
+    for(i=1;i<=CARDS_CNT;i++){
+      if(masa_cards[i]!=a.masa_cards[i]){
+        return false;
+      }
+    }
+
+    for(i=0;i<SNOBNR;i++){
+      if(masa_snob[i]!=a.masa_snob[i]){
+        return false;
+      }
+    }
+
+    for(i=0;i<GEM_GOLD;i++){
+      if(masa_gems[i]!=a.masa_gems[i]){
+        return false;
+      }
+    }
+
+    for(i=0;i<2;i++){
+      for(j=0;j<GEM_GOLD;j++){
+        if(player_gems[i][j]!=a.player_gems[i][j]){
+          return false;
+        }
+      }
+      for(j=0;j<GEM_CNT;j++){
+        if(bonus[i][j]!=a.bonus[i][j]){
+          return false;
+        }
+      }
+      for(j=1;j<=CARDS_CNT;j++){
+        if(rez[i][j]!=a.rez[i][j]){
+          return false;
+        }
+      }
+
+      if(nrRez[i]!=a.nrRez[i]){
+        return false;
+      }
+      if(points[i]!=a.points[i]){
+        return false;
+      }
+      if(nrGems[i]!=a.nrGems[i]){
+        return false;
+      }
+      if(nrSnob[i]!=a.nrSnob[i]){
+        return false;
+      }
+    }
+
+    if(usedRezerve!=a.usedRezerve){
+      return false;
+    }
+
+    return true;
+  }
 };
 
 int maxim(int a,int b){
@@ -41,13 +109,13 @@ int minim(int a,int b){
 }
 
 int CalculPersoana(int player,const DATE &game){
-  int s,i,j,cont[5],nr,sumGem[5];
+  int s,i;
 
   s=0;
 
   //s+=(game.points[player]-game.points[1-player])*500;
 
-  s+=game.points[player]*1000;
+  s+=game.points[player]*100000;
 
   for(i=0;i<GEM_CNT;i++){
     s+=game.bonus[player][i]*50*(15-round_nr);
@@ -233,130 +301,145 @@ bool Prunes(int &alpha,int &beta,int val,int maxer){
   return 0;
 }
 
-int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta){
-  int x,y,z,mi,aux;
+int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta);
 
-  //player=id;
-  //inm=1;
+RET Move1Token(int player, int adan, DATE &game,int inm,int alpha,int beta,int &mi){
+  int x,aux;
 
-  mi=INFI*(-inm);
+  ///Luam 1 Jetoan
+  if(game.nrGems[player]<=9){
+    for(x=0;x<GEM_CNT;x++){
+      if(game.masa_gems[x]>=1){
 
-  if(adan==0){
-    ans.val=-INFI*10;
-  }
+        #ifdef DEBUG
+        DATE newgame = game;
+        #endif // DEBUG
 
-  if(adan>=DEPTH){
-    return CalculStatic(id,adan,game);
-  }
+        AddJewel(player,x,game);
 
-  if(adan>0 && (id+player)%2==0 && (game.points[player]>=15 || game.points[1-player]>=15)){
-    if(game.points[player]==game.points[1-player]){
-      int cp,cNp;
+        aux = Minimax(1-player,adan+1,game,-inm,alpha,beta);
 
-      cp = CountCards(id,game);
-      cNp= CountCards(1-id,game);
+        mi=maxim(mi*inm,aux*inm)*inm;
 
-      if(cp==cNp){
-        return 0;
+        if(adan==0){
+          UpdateAns(aux,1,x,-1,-1);
+        }
+
+        RmJewel(player,x,game);
+
+        #ifdef DEBUG
+        assert(newgame==game && "TIP 1 Jeton");
+        #endif // DEBUG
+
+        if(Prunes(alpha,beta,aux,inm)){
+          return {true,mi};
+        }
       }
-      if(cp>cNp){
-        return INFI;
-      }
-      return -INFI;
     }
-    if(game.points[id]>game.points[1-id]){
-      return INFI;
-    }
-    return -INFI;
   }
 
-  ///Luam Jetoane
+  return {false,-1};
+}
 
-    ///Luam 1 Jetoan
-    if(game.nrGems[player]==9){
-      for(x=0;x<GEM_CNT;x++){
-        if(game.masa_gems[x]>=1){
+RET Move2Token(int player, int adan, DATE &game,int inm,int alpha,int beta,int &mi){
+  int x,y,aux;
+
+  ///Luam 2 Jetoane
+  if(game.nrGems[player]<=8){
+    for(x=0;x<GEM_CNT;x++){
+      for(y=x+1;y<GEM_CNT;y++){
+        if(game.masa_gems[x]>=1 && game.masa_gems[y]>=1){
+
+          #ifdef DEBUG
+          DATE newgame = game;
+          #endif // DEBUG
+
           AddJewel(player,x,game);
+          AddJewel(player,y,game);
 
           aux = Minimax(1-player,adan+1,game,-inm,alpha,beta);
 
           mi=maxim(mi*inm,aux*inm)*inm;
 
           if(adan==0){
-            UpdateAns(aux,1,x,-1,-1);
+            UpdateAns(aux,1,x,y,-1);
           }
 
           RmJewel(player,x,game);
+          RmJewel(player,y,game);
+
+          #ifdef DEBUG
+          assert(newgame==game && "TIP 2 Jetoane");
+          #endif // DEBUG
 
           if(Prunes(alpha,beta,aux,inm)){
-            return mi;
+            return {true,mi};
           }
         }
       }
     }
+  }
 
-    ///Luam 2 Jetoane
-    if(game.nrGems[player]==8){
-      for(x=0;x<GEM_CNT;x++){
-        for(y=x+1;y<GEM_CNT;y++){
-          if(game.masa_gems[x]>=1 && game.masa_gems[y]>=1){
+  return {false,-1};
+}
+
+RET Move3Token(int player, int adan, DATE &game,int inm,int alpha,int beta,int &mi){
+  int x,y,z,aux;
+
+  ///Luam 3 Jetoane
+  if(game.nrGems[player]<=7){
+    for(x=0;x<GEM_CNT;x++){
+      for(y=x+1;y<GEM_CNT;y++){
+        for(z=y+1;z<GEM_CNT;z++){
+          if(game.masa_gems[x]>=1 && game.masa_gems[y]>=1 && game.masa_gems[z]>=1){
+
+            #ifdef DEBUG
+            DATE newgame = game;
+            #endif // DEBUG
+
             AddJewel(player,x,game);
             AddJewel(player,y,game);
+            AddJewel(player,z,game);
 
             aux = Minimax(1-player,adan+1,game,-inm,alpha,beta);
 
             mi=maxim(mi*inm,aux*inm)*inm;
 
             if(adan==0){
-              UpdateAns(aux,1,x,y,-1);
+              UpdateAns(aux,1,x,y,z);
             }
 
             RmJewel(player,x,game);
             RmJewel(player,y,game);
+            RmJewel(player,z,game);
+
+            #ifdef DEBUG
+            assert(newgame==game && "TIP 3 Jetoane");
+            #endif // DEBUG
 
             if(Prunes(alpha,beta,aux,inm)){
-              return mi;
+              return {true,mi};
             }
           }
         }
       }
     }
+  }
+  return {false,-1};
+}
 
-    ///Luam 3 Jetoane
-    if(game.nrGems[player]<=7){
-      for(x=0;x<GEM_CNT;x++){
-        for(y=x+1;y<GEM_CNT;y++){
-          for(z=y+1;z<GEM_CNT;z++){
-            if(game.masa_gems[x]>=1 && game.masa_gems[y]>=1 && game.masa_gems[z]>=1){
-              AddJewel(player,x,game);
-              AddJewel(player,y,game);
-              AddJewel(player,z,game);
-
-              aux = Minimax(1-player,adan+1,game,-inm,alpha,beta);
-
-              mi=maxim(mi*inm,aux*inm)*inm;
-
-              if(adan==0){
-                UpdateAns(aux,1,x,y,z);
-              }
-
-              RmJewel(player,x,game);
-              RmJewel(player,y,game);
-              RmJewel(player,z,game);
-
-              if(Prunes(alpha,beta,aux,inm)){
-                return mi;
-              }
-            }
-          }
-        }
-      }
-    }
+RET Move2TokenEgale(int player, int adan, DATE &game,int inm,int alpha,int beta,int &mi){
+  int x,aux;
 
   ///Luam 2 Jetoane de aceeasi culoare
   if(game.nrGems[player]<=8){
     for(x=0;x<GEM_CNT;x++){
       if(game.masa_gems[x]>=4){
+
+        #ifdef DEBUG
+        DATE newgame = game;
+        #endif // DEBUG
+
         AddJewel(player,x,game);
         AddJewel(player,x,game);
 
@@ -371,20 +454,35 @@ int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta){
         RmJewel(player,x,game);
         RmJewel(player,x,game);
 
+        #ifdef DEBUG
+        assert(newgame==game && "TIP 2 Jetoane egale");
+        #endif // DEBUG
+
         if(Prunes(alpha,beta,aux,inm)){
-          return mi;
+          return {true,mi};
         }
       }
     }
   }
 
+  return {false,-1};
+}
+
+RET MoveRezerv(int player, int adan, DATE &game,int inm,int alpha,int beta,int &mi){
+  int x,aux;
 
   ///Rezerv
   if(game.nrRez[player]<=2 && (game.nrGems[player]<=9 && game.masa_gems[GOLD]>=1)){
     for(x=1;x<=CARDS_CNT;x++){
       if(game.masa_cards[x]==1){
+
+        #ifdef DEBUG
+        DATE newgame = game;
+        #endif // DEBUG
+
         game.nrRez[player]++;
         game.rez[player][x]=1;
+        game.masa_cards[x]=0;
 
         int addGold=0;
         if(game.masa_gems[GOLD]>1){
@@ -406,19 +504,34 @@ int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta){
         }
         game.nrRez[player]--;
         game.rez[player][x]=0;
+        game.masa_cards[x]=1;
+
+        #ifdef DEBUG
+        assert(newgame==game && "TIP Rezervare");
+        #endif // DEBUG
 
         if(Prunes(alpha,beta,aux,inm)){
-          return mi;
+          return {true,mi};
         }
       }
     }
   }
 
+  return {false,-1};
+}
+
+RET MoveCumpar(int player, int adan, DATE &game,int inm,int alpha,int beta,int &mi){
+  int x,y,aux;
 
   ///Cumpar
   for(x=1;x<=CARDS_CNT;x++){
     if(game.masa_cards[x]==1 || game.rez[player][x]==1){
       if(PosibilBuy(player,x,game)){
+
+        #ifdef DEBUG
+        DATE newgame = game;
+        #endif // DEBUG
+
         int careDintre;
         int snobAles,snobValoare;
 
@@ -493,12 +606,97 @@ int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta){
           game.rez[player][x]=1;
         }
 
+        #ifdef DEBUG
+        assert(newgame==game && "TIP Cumparat");
+        #endif // DEBUG
+
         if(Prunes(alpha,beta,aux,inm)){
-          return mi;
+          return {true,mi};
         }
       }
     }
   }
+
+  return {false,-1};
+}
+
+int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta){
+  int mi;
+  RET path;
+
+  //player=id;
+  //inm=1;
+
+  mi=INFI*(-inm);
+
+  if(adan==0){
+    ans.val=-INFI*10;
+  }
+
+  if(adan>=DEPTH){
+    return CalculStatic(id,adan,game);
+  }
+
+  if(adan>0 && (id+player)%2==0 && (game.points[player]>=15 || game.points[1-player]>=15)){
+    int calcStatic = CalculStatic(id,adan,game);
+
+    if(game.points[player]==game.points[1-player]){
+      int cp,cNp;
+
+      cp = CountCards(id,game);
+      cNp= CountCards(1-id,game);
+
+      if(cp==cNp){
+        return 0;
+      }
+      if(cp>cNp){
+        return INFI+calcStatic;
+      }
+      return -INFI+calcStatic;
+    }
+    if(game.points[id]>game.points[1-id]){
+      return INFI+calcStatic;
+    }
+    return -INFI+calcStatic;
+  }
+
+  ///Cumpar
+
+  path = MoveCumpar(player,adan,game,inm,alpha,beta,mi);
+  if(path.isPruned==true){
+    return path.val;
+  }
+
+  ///Rezerv
+
+  path = MoveRezerv(player,adan,game,inm,alpha,beta,mi);
+  if(path.isPruned==true){
+    return path.val;
+  }
+
+  ///Luam Jetoane
+    ///Luam 3 Jetoane
+    path = Move3Token(player,adan,game,inm,alpha,beta,mi);
+    if(path.isPruned==true){
+      return path.val;
+    }
+
+    ///Luam 2 Jetoane
+    path = Move2Token(player,adan,game,inm,alpha,beta,mi);
+    if(path.isPruned==true){
+      return path.val;
+    }
+    ///Luam 1 Jetoan
+    path = Move1Token(player,adan,game,inm,alpha,beta,mi);
+    if(path.isPruned==true){
+      return path.val;
+    }
+
+    ///Luam 2 Jetoane Egale
+    path = Move2TokenEgale(player,adan,game,inm,alpha,beta,mi);
+    if(path.isPruned==true){
+      return path.val;
+    }
 
   return mi;
 }

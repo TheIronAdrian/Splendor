@@ -1,0 +1,7 @@
+tmp
+obj
+bin
+test.1.er
+*.depend
+*.layout
+*.cbp
