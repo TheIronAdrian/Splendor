@@ -68,13 +68,12 @@ DATE MakeBaseGame(){
     }
   }
 
-  for(i=0;i<CARDS_CNT;i++){
-    game.masa_cards[i]=0;
-  }
+  setZero(game.masa_cards);
+
   for(i=0;i<RANKS;i++){
     for(j=0;j<MAX_CARDS_ROW;j++){
       if(table_cards[i][j]>=0){
-        game.masa_cards[table_cards[i][j]]=1;
+        addBit(game.masa_cards,table_cards[i][j]);
       }
     }
   }
@@ -108,12 +107,10 @@ DATE MakeBaseGame(){
   }
 
   for(i=0;i<2;i++){
-    for(j=0;j<=CARDS_CNT;j++){
-      game.rez[i][j]=0;
-    }
+    setZero(game.rez[i]);
 
     for(j=0;j<game.nrRez[i];j++){
-      game.rez[i][player_data[i].rez[j]]=1;
+      addBit(game.rez[i],player_data[i].rez[j]);
     }
   }
 

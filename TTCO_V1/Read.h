@@ -5,7 +5,6 @@
 #define MAX_CARDS_ROW 4
 #define MAX_REZ 3
 #define RANKS 3
-#define MOD 31
 
 struct PLAYER{
   int gems[GEM_GOLD];

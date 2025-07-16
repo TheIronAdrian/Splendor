@@ -12,6 +12,13 @@ int main(){
   CalculateBonusBef();
   CalculateMasks();
 
+  if(round_nr<=4){
+    DEPTH=4;
+  }else{
+    if(round_nr<=6){
+      DEPTH=6;
+    }
+  }
 
   DATE game = MakeBaseGame();
   Minimax(id,0,game,1,-INFI,INFI);
