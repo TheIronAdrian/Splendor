@@ -5,7 +5,7 @@ int DEPTH = 8;
 #define SNOBNR 4
 #define MOD 64
 #define ROUNDACCEPTJEWEL 4
-#define MAXTIME 1.0f
+#define MAXTIME 2.0f
 
 //#define DEBUG
 
@@ -205,14 +205,15 @@ int CalculPersoana(int player,const DATE &game){
 
   s=0;
 
-  s+=game.points[player]*150;
+  s+=game.points[player]*2;
 
   for(i=0;i<GEM_CNT;i++){
-    s+=game.bonus[player][i]*30;
+    s+=game.bonus[player][i]*1;
     s+=game.player_gems[player][i]*1;
   }
 
-  s+=game.player_gems[player][GOLD]*3;
+  s+=game.nrRez[player]*1;
+  s+=game.player_gems[player][GOLD]*1;
 
   return s;
 }
