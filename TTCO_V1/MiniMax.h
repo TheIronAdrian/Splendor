@@ -205,7 +205,7 @@ int CalculPersoana(int player,const DATE &game){
 
   s=0;
 
-  s+=game.points[player]*2;
+  s+=game.points[player]*5;
 
   for(i=0;i<GEM_CNT;i++){
     s+=game.bonus[player][i]*1;
