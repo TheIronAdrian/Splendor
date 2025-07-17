@@ -27,6 +27,9 @@
 		<Unit filename="MiniMax.h" />
 		<Unit filename="Precalculations.h" />
 		<Unit filename="Read.h" />
+		<Unit filename="Time.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />

@@ -5,7 +5,7 @@ int DEPTH = 8;
 #define SNOBNR 4
 #define MOD 64
 #define ROUNDACCEPTJEWEL 4
-#define MAXTIME 3.0f
+#define MAXTIME 1.0f
 
 //#define DEBUG
 
@@ -205,66 +205,13 @@ int CalculPersoana(int player,const DATE &game){
 
   s=0;
 
-  //s+=(game.points[player]-game.points[1-player])*500;
-
-  s+=game.points[player]*10000;
+  s+=game.points[player]*150;
 
   for(i=0;i<GEM_CNT;i++){
-    s+=game.bonus[player][i]*50*(30-round_nr);
-    s+=game.player_gems[player][i]*2;
+    s+=game.bonus[player][i]*30;
+    s+=game.player_gems[player][i]*1;
   }
 
-  /*
-  sumGem[0]=0;
-  sumGem[1]=0;
-  sumGem[2]=0;
-  sumGem[3]=0;
-  sumGem[4]=0;
-
-  for(i=1;i<=CARDS_CNT;i++){
-    if(game.rez[player][i]==1 || game.masa_cards[i]==1){
-      for(j=0;j<GEM_CNT;j++){
-        sumGem[j]+=CARDS[i][j];
-      }
-    }
-    if(game.rez[player][i]==1){
-      s+=CARDS[i][POINTS]*5000;
-      cont[CARDS[i][BONUS]]++;
-    }
-  }
-  //*/
-
-
-
-  /*
-  for(j=0;j<GEM_CNT;j++){
-    s+=(sumGem[j]*game.player_gems[player][j])/15;
-  }
-  cont[0]=0;
-  cont[1]=0;
-  cont[2]=0;
-  cont[3]=0;
-  cont[4]=0;
-  for(i=0;i<GEM_CNT;i++){
-    if(game.bonus[player][i]>0){
-      cont[i]++;
-    }
-  }
-
-  nr=0;
-  for(i=0;i<GEM_CNT;i++){
-    if(cont[i]==1){
-      nr++;
-    }
-  }
-
-  if(nr<=3){
-    s+=20000;
-  }
-  //*/
-
-
-  s-=game.nrRez[player]*(5-round_nr)*50;
   s+=game.player_gems[player][GOLD]*3;
 
   return s;
@@ -373,9 +320,11 @@ int CountCards(int player, const DATE &game){
 
 bool Prunes(int &alpha,int &beta,int val,int maxer){
 
+  //*
   if(getTime()>=MAXTIME){
     return 1;
   }
+  //*/
 
   if(maxer==1){ ///Maximizeaza
 
@@ -404,7 +353,7 @@ RET Move1Token(int player, int adan, DATE &game,int inm,int alpha,int beta,int &
   int x,aux;
 
   ///Luam 1 Jetoan
-  if(game.nrGems[player]<=9){
+  if(game.nrGems[player]==9){
     for(x=0;x<GEM_CNT;x++){
       if(game.masa_gems[x]>=1){
 
@@ -442,7 +391,7 @@ RET Move2Token(int player, int adan, DATE &game,int inm,int alpha,int beta,int &
   int x,y,aux;
 
   ///Luam 2 Jetoane
-  if(game.nrGems[player]<=8){
+  if(game.nrGems[player]==8){
     for(x=0;x<GEM_CNT;x++){
       for(y=x+1;y<GEM_CNT;y++){
         if(game.masa_gems[x]>=1 && game.masa_gems[y]>=1){
@@ -633,6 +582,10 @@ RET MoveCumpar(int player, int adan, DATE &game,int inm,int alpha,int beta,int &
     x = ctzBit(iter);
     rmBit(iter,x);
 
+    /*if(x==79){
+      printf("nah");
+    }*/
+
     if(PosibilBuy(player,x,game)){
 
       #ifdef DEBUG
@@ -752,7 +705,7 @@ int Minimax(int player, int adan, DATE &game,int inm,int alpha,int beta){
       if(cp==cNp){
         return 0;
       }
-      if(cp>cNp){
+      if(cp<cNp){
         return INFI+calcStatic;
       }
       return -INFI+calcStatic;
