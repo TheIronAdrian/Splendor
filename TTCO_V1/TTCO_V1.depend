@@ -18,7 +18,7 @@
 
 1752492477 c:\users\mihai\tabaranerdvana2025\ttco_v1\afisare.h
 
-1752821759 source:c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\main.cpp
+1752828207 source:c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\main.cpp
 	<iostream>
 	"Cards.h"
 	"Read.h"
@@ -43,7 +43,7 @@
 1752660175 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\time.h
 	<chrono>
 
-1752824435 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\montecarlo.h
+1752828231 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\montecarlo.h
 	<vector>
 	<math.h>
 	<queue>

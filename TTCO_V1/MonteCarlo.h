@@ -10,6 +10,8 @@ int totalSims;
 
 #define NRDATEINNOD 5
 
+int NoMovesSims;
+
 struct CompareNODE;
 
 struct NODE;
@@ -92,6 +94,43 @@ struct NODE{
   }
 };
 
+constexpr size_t NODE_POOL_SIZE = 100'000'000;
+
+struct NodePool {
+    NODE* pool = nullptr;
+    size_t poolIndex = 0;
+
+    void init() {
+        pool = static_cast<NODE*>(std::malloc(sizeof(NODE) * NODE_POOL_SIZE));
+        poolIndex = 0;
+        if (!pool) {
+            std::cerr << "Out of memory in NodePool!\n";
+            std::exit(1);
+        }
+    }
+
+    NODE* allocate(const NODE& copyFrom) {
+        if (poolIndex >= NODE_POOL_SIZE) {
+            std::cerr << "NodePool exhausted!\n";
+            std::exit(1); // or return nullptr
+        }
+        NODE* newNode = &pool[poolIndex++];
+        *newNode = copyFrom; // or use placement-new if needed
+        return newNode;
+    }
+
+    void reset() {
+        poolIndex = 0; // reuse the memory in next run
+    }
+
+    void destroy() {
+        std::free(pool);
+        pool = nullptr;
+    }
+};
+
+NodePool nodePool;
+
 bool CompareNODE::operator()(const NODE* a, const NODE* b) const {
     return a->value < b->value;  // Max heap (highest value at top)
 }
@@ -114,7 +153,12 @@ void AddMove1Token(int player,DATE &game,NODE &mutare){
   if(game.nrGems[player]==9){
     for(x=0;x<GEM_CNT;x++){
       if(game.masa_gems[x]>=1){
-        mutare.sons.push(new NODE(1,{1,x,-1,-1},player,game));
+
+        NODE copy(1,{1,x,-1,-1},player,game);
+
+        NODE* child = nodePool.allocate(copy);
+
+        mutare.sons.push(child);
       }
     }
   }
@@ -129,7 +173,11 @@ void AddMove2Token(int player,DATE &game,NODE &mutare){
       if(game.masa_gems[x]>=1){
         for(y=x+1;y<GEM_CNT;y++){
           if(game.masa_gems[y]>=1){
-            mutare.sons.push(new NODE(1,{2,x,y,-1},player,game));
+            NODE copy(1,{2,x,y,-1},player,game);
+
+            NODE* child = nodePool.allocate(copy);
+
+            mutare.sons.push(child);
           }
         }
       }
@@ -148,7 +196,11 @@ void AddMove3Token(int player,DATE &game,NODE &mutare){
           if(game.masa_gems[y]>=1){
             for(z=y+1;z<GEM_CNT;z++){
               if(game.masa_gems[z]>=1){
-                mutare.sons.push(new NODE(1,{3,x,y,z},player,game));
+                NODE copy(1,{3,x,y,z},player,game);
+
+                NODE* child = nodePool.allocate(copy);
+
+                mutare.sons.push(child);
               }
             }
           }
@@ -165,7 +217,11 @@ void AddMove2SameToken(int player,DATE &game,NODE &mutare){
   if(game.nrGems[player]<=8){
     for(x=0;x<GEM_CNT;x++){
       if(game.masa_gems[x]>=4){
-        mutare.sons.push(new NODE(2,{x,-1,-1,-1},player,game));
+        NODE copy(2,{x,-1,-1,-1},player,game);
+
+        NODE* child = nodePool.allocate(copy);
+
+        mutare.sons.push(child);
       }
     }
   }
@@ -183,7 +239,11 @@ void AddMoveRezervare(int player,DATE &game,NODE &mutare){
       x=ctzBit(iter);
       rmBit(iter,x);
 
-      mutare.sons.push(new NODE(3,{x,-1,-1,-1},player,game));
+      NODE copy(3,{x,-1,-1,-1},player,game);
+
+      NODE* child = nodePool.allocate(copy);
+
+      mutare.sons.push(child);
     }
   }
 }
@@ -201,7 +261,11 @@ void AddMoveCumparare(int player,DATE &game,NODE &mutare){
     rmBit(iter,x);
 
     if(PosibilBuy(player,x,game)){
-      mutare.sons.push(new NODE(4,{x,-1,-1,-1},player,game));
+      NODE copy(4,{x,-1,-1,-1},player,game);
+
+      NODE* child = nodePool.allocate(copy);
+
+      mutare.sons.push(child);
     }
   }
 }
@@ -246,6 +310,11 @@ int AddCardInsteadCard(int player,DATE &game,int idCard){
 bool GoDeeper(int player,int state,int adan,DATE &game,NODE &mutare){
   int i;
 
+  if(state==2){
+    NoMovesSims++;
+    return 0;
+  }
+
   if(adan>90){
     mutare.GameUpdate(0);
 
@@ -286,7 +355,7 @@ bool GoDeeper(int player,int state,int adan,DATE &game,NODE &mutare){
   }
 
 
-  if(mutare.sons.empty() /*&& state==0*/){
+  if(mutare.sons.empty()){
     ///Generez Mutarile
     AddMoveCumparare(player,game,mutare);
     AddMoveRezervare(player,game,mutare);
@@ -294,23 +363,33 @@ bool GoDeeper(int player,int state,int adan,DATE &game,NODE &mutare){
     AddMove2Token(player,game,mutare);
     AddMove3Token(player,game,mutare);
     AddMove2SameToken(player,game,mutare);
-    state=1;
 
     if(mutare.sons.empty()){
       mutare.GameUpdate(0);
-      return 0;
+
+      NODE copy(1,{0,-1,-1,-1},player,game);
+
+      NODE* child = nodePool.allocate(copy);
+
+      mutare.sons.push(child);
+
+      NODE* mutareNula = mutare.sons.top();
+      mutare.sons.pop();
+
+      state++;
+      bool isWon=GoDeeper((player+1)%nr_players,state,adan+1,game,*mutareNula);
+
+      mutare.GameUpdate(isWon);
+      mutare.sons.push(mutareNula);
+
+      return isWon;
     }
   }
 
+  state=0;
 
   NODE* nextMove = mutare.sons.top();
   mutare.sons.pop();
-
-  //*
-  if(nextMove->modi[0]==3 && nextMove->modi[1]==2 && nextMove->modi[2]==2 && nextMove->modi[3]==3){
-    printf("YES\n");
-  }
-  //*/
 
   ///Update Gamestate
 

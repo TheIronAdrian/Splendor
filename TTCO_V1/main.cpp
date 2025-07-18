@@ -13,6 +13,7 @@
 
 #define CONSTRAND 5
 
+
 #include "MonteCarlo.h"
 using namespace std;
 
@@ -20,6 +21,7 @@ using namespace std;
 #define MINIMAX 0
 #define MONTECARLO 1
 #define TYPEMODEL MONTECARLO
+
 
 int main(){
 
@@ -49,6 +51,8 @@ int main(){
     cerr << "FINAL: " << lastAns.val << "\n";
   }else{
 
+    nodePool.init();
+
     DATE baseGame = MakeBaseGame();
     NODE mutare0(-1,{-1,-1,-1,-1},id,baseGame);
 
@@ -71,6 +75,7 @@ int main(){
     //printf("%d %d %d %d %d\n",mutare0.sons.top()->type,mutare0.sons.top()->modi[0],mutare0.sons.top()->modi[1],mutare0.sons.top()->modi[2],mutare0.sons.top()->modi[3]);
 
     AfisareMCTS(ans);
+    cerr << "kibitz No Move Sims Total: " << NoMovesSims << " \n";
     cerr << "kibitz WINS: " << mutare0.sons.top()->wins << " \n";
     cerr << "kibitz SIMS: " << mutare0.sons.top()->sims << " \n";
     cerr << "kibitz TYPE: " << mutare0.sons.top()->type << " \n";
