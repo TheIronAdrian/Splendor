@@ -71,7 +71,7 @@ struct NODE{
       modi[i]=b[i];
     }
 
-    value = INFI+/*(rand()%20)-10;*/CalculPersoanaMCTS(player,game);
+    value = INFI+(rand()%200)-100;
 
     while(!sons.empty()){
       sons.pop();
@@ -307,15 +307,15 @@ int AddCardInsteadCard(int player,DATE &game,int idCard){
   return idCardNou;
 }
 
-bool GoDeeper(int player,int state,int adan,DATE &game,NODE &mutare){
+bool GoDeeper(int player,int state,int adan,DATE &game,NODE &mutare,int modState){
   int i;
 
-  if(state==2){
+  if(state==nr_players){
     NoMovesSims++;
     return 0;
   }
 
-  if(adan>90){
+  if(adan>50*nr_players){
     mutare.GameUpdate(0);
 
     //std::cerr << "kibitz TO DEEP\n";
@@ -357,6 +357,7 @@ bool GoDeeper(int player,int state,int adan,DATE &game,NODE &mutare){
 
   if(mutare.sons.empty()){
     ///Generez Mutarile
+    modState++;
     AddMoveCumparare(player,game,mutare);
     AddMoveRezervare(player,game,mutare);
     AddMove1Token(player,game,mutare);
@@ -377,7 +378,7 @@ bool GoDeeper(int player,int state,int adan,DATE &game,NODE &mutare){
       mutare.sons.pop();
 
       state++;
-      bool isWon=GoDeeper((player+1)%nr_players,state,adan+1,game,*mutareNula);
+      bool isWon=GoDeeper((player+1)%nr_players,state,adan+1,game,*mutareNula,modState);
 
       mutare.GameUpdate(isWon);
       mutare.sons.push(mutareNula);
@@ -482,10 +483,18 @@ bool GoDeeper(int player,int state,int adan,DATE &game,NODE &mutare){
 
   //printf("%d : %d %d %d %d\n",nextMove->type,nextMove->modi[0],nextMove->modi[1],nextMove->modi[2],nextMove->modi[3]);
 
-  bool isWon=GoDeeper((player+1)%nr_players,state,adan+1,game,*nextMove);
+  bool isWon=GoDeeper((player+1)%nr_players,state,adan+1,game,*nextMove,modState);
 
-  mutare.GameUpdate(isWon);
-  mutare.sons.push(nextMove);
+  if(modState>=2){
+    while(mutare.sons.empty()){
+      mutare.sons.pop();
+    }
+  }
+
+  if(modState<=1){
+    mutare.GameUpdate(isWon);
+    mutare.sons.push(nextMove);
+  }
 
   return isWon;
 }

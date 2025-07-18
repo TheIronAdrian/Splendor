@@ -57,21 +57,28 @@ int main(){
     NODE mutare0(-1,{-1,-1,-1,-1},id,baseGame);
 
     DATE game;
-    while(getTime()<=MAXTIME){
+    while(/*true==true || */getTime()<=MAXTIME){
       game=baseGame;
       totalSims++;
-      GoDeeper(id,0,0,game,mutare0);
+      GoDeeper(id,0,0,game,mutare0,0);
       //printf("%d %d %d %d %d\n",mutare0.sons.top()->type,mutare0.sons.top()->modi[0],mutare0.sons.top()->modi[1],mutare0.sons.top()->modi[2],mutare0.sons.top()->modi[3]);
       //printf("-----------------------\n");
     }
-
+    double ma=-1;
     MOVE ans;
 
-    ans.type=mutare0.sons.top()->type;
-    ans.rasp[0]=mutare0.sons.top()->modi[0];
-    ans.rasp[1]=mutare0.sons.top()->modi[1];
-    ans.rasp[2]=mutare0.sons.top()->modi[2];
-    ans.rasp[3]=mutare0.sons.top()->modi[3];
+    while(!mutare0.sons.empty()){
+      if(ma<((double)mutare0.sons.top()->wins)/(mutare0.sons.top()->sims)){
+        ma=((double)mutare0.sons.top()->wins)/(mutare0.sons.top()->sims);
+        ans.type=mutare0.sons.top()->type;
+        ans.rasp[0]=mutare0.sons.top()->modi[0];
+        ans.rasp[1]=mutare0.sons.top()->modi[1];
+        ans.rasp[2]=mutare0.sons.top()->modi[2];
+        ans.rasp[3]=mutare0.sons.top()->modi[3];
+      }
+      mutare0.sons.pop();
+    }
+
     //printf("%d %d %d %d %d\n",mutare0.sons.top()->type,mutare0.sons.top()->modi[0],mutare0.sons.top()->modi[1],mutare0.sons.top()->modi[2],mutare0.sons.top()->modi[3]);
 
     AfisareMCTS(ans);
