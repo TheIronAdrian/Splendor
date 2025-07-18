@@ -5,9 +5,9 @@ int DEPTH = 8;
 #define SNOBNR 4
 #define MOD 64
 #define ROUNDACCEPTJEWEL 4
-#define MAXTIME 2.0f
 
 //#define DEBUG
+#define MAXPLAYERS 4
 
 #include <cassert>
 #include <queue>
@@ -15,7 +15,7 @@ int DEPTH = 8;
 inline double getTime();
 
 struct MOVE{
-  int val,type,rasp[3];
+  int val,type,rasp[4];
 };
 
 struct RET{
@@ -114,15 +114,16 @@ MOVE ans;
 
 struct DATE{
   BITISETI masa_cards;
+  BITISETI notPosibleCards;
   int masa_snob[SNOBNR];
   int masa_gems[GEM_GOLD];
-  int player_gems[2][GEM_GOLD];
-  int bonus[2][GEM_CNT];
-  BITISETI rez[2];
-  int nrRez[2];
-  int points[2];
-  int nrGems[2];
-  int nrSnob[2];
+  int player_gems[MAXPLAYERS][GEM_GOLD];
+  int bonus[MAXPLAYERS][GEM_CNT];
+  BITISETI rez[MAXPLAYERS];
+  int nrRez[MAXPLAYERS];
+  int points[MAXPLAYERS];
+  int nrGems[MAXPLAYERS];
+  int nrSnob[MAXPLAYERS];
   int usedRezerve;
 
   bool operator==(DATE &a){
@@ -131,6 +132,9 @@ struct DATE{
 
     for(i=1;i<=CARDS_CNT;i++){
       if(askBit(masa_cards,i)!=askBit(a.masa_cards,i)){
+        return false;
+      }
+      if(askBit(notPosibleCards,i)!=askBit(a.notPosibleCards,i)){
         return false;
       }
     }
@@ -147,7 +151,7 @@ struct DATE{
       }
     }
 
-    for(i=0;i<2;i++){
+    for(i=0;i<nr_players;i++){
       for(j=0;j<GEM_GOLD;j++){
         if(player_gems[i][j]!=a.player_gems[i][j]){
           return false;

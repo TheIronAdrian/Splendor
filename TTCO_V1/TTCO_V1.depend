@@ -18,7 +18,7 @@
 
 1752492477 c:\users\mihai\tabaranerdvana2025\ttco_v1\afisare.h
 
-1752671357 source:c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\main.cpp
+1752821759 source:c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\main.cpp
 	<iostream>
 	"Cards.h"
 	"Read.h"
@@ -26,19 +26,26 @@
 	"Precalculations.h"
 	"Afisare.h"
 	"Time.h"
+	"MonteCarlo.h"
 
 1752506859 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\cards.h
 
 1752653858 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\read.h
 
-1752748412 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\minimax.h
+1752821728 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\minimax.h
 	<cassert>
 	<queue>
 
-1752660124 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\precalculations.h
+1752819263 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\precalculations.h
 
-1752492477 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\afisare.h
+1752821807 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\afisare.h
 
 1752660175 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\time.h
 	<chrono>
+
+1752824435 c:\users\mihai\tabaranerdvana2025\splendor\ttco_v1\montecarlo.h
+	<vector>
+	<math.h>
+	<queue>
+	<array>
 

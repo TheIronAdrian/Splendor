@@ -25,6 +25,9 @@
 		</Unit>
 		<Unit filename="Cards.h" />
 		<Unit filename="MiniMax.h" />
+		<Unit filename="MonteCarlo.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="Precalculations.h" />
 		<Unit filename="Read.h" />
 		<Unit filename="Time.h">
