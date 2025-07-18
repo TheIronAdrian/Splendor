@@ -71,7 +71,7 @@ struct NODE{
       modi[i]=b[i];
     }
 
-    value = INFI+(rand()%200)-100;
+    value = INFI+(rand()%20)*CalculPersoanaMCTS(player,game);
 
     while(!sons.empty()){
       sons.pop();
@@ -386,8 +386,6 @@ bool GoDeeper(int player,int state,int adan,DATE &game,NODE &mutare,int modState
       return isWon;
     }
   }
-
-  state=0;
 
   NODE* nextMove = mutare.sons.top();
   mutare.sons.pop();

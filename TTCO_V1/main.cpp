@@ -9,7 +9,7 @@
 ///TTCO (Think Twice Code Once)
 ///(a named made by Mocanu Mihai-Adrian and Victor Teodor Nicola)
 #define SEED 42
-#define MONTECARLOCONST 1.5f
+#define MONTECARLOCONST 2.0f
 
 #define CONSTRAND 5
 
@@ -20,7 +20,7 @@ using namespace std;
 #define MAXDEPTH 12
 #define MINIMAX 0
 #define MONTECARLO 1
-#define TYPEMODEL MONTECARLO
+#define TYPEMODEL MINIMAX
 
 
 int main(){
@@ -57,7 +57,7 @@ int main(){
     NODE mutare0(-1,{-1,-1,-1,-1},id,baseGame);
 
     DATE game;
-    while(/*true==true || */getTime()<=MAXTIME){
+    while(getTime()<=MAXTIME){
       game=baseGame;
       totalSims++;
       GoDeeper(id,0,0,game,mutare0,0);
