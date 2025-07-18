@@ -332,7 +332,7 @@ bool GoDeeper(int player,int state,int adan,DATE &game,NODE &mutare){
         ma=game.points[i];
         x=i;
       }else{
-        if(ma==game.points[i]){
+        if(ma==game.points[i] && ma>=15){
           if(CalcCards(x,game)>CalcCards(i,game)){
             x=i;
           }
